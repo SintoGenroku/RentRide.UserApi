@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Users.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Users.Api.Controllers.UsersController">
+            <summary>
+                Controller for working with users
+            </summary>
+        </member>
+        <member name="M:Users.Api.Controllers.UsersController.GetUsersAsync">
+            <summary>
+                Allows you get all users
+            </summary>
+        </member>
+        <member name="M:Users.Api.Controllers.UsersController.GetUserAsync(System.Guid)">
+            <summary>
+                Allows get current user with his contracts by his ID
+            </summary>
+            <param name="id">GUID user identifier</param>
+        </member>
+        <member name="M:Users.Api.Controllers.UsersController.ChangeUserActivityAsync(System.Guid)">
+            <summary>
+                Allows delete current user by his ID
+            </summary>
+            <param name="id">GUID user identifier</param>
+        </member>
+        <member name="M:Users.Api.Controllers.UsersController.EditUserAsync(Users.Api.Models.Requests.Users.UserEditRequestModel,System.Guid)">
+            <summary>
+                Allows update current user 
+            </summary>
+            <param name="userEditRequestModel">special user model with updated data</param>
+            <param name="id">GUID user identifier</param>
+        </member>
+    </members>
+</doc>

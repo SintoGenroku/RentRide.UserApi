@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RentRide.AuthenticationApi.Models\RentRide.AuthenticationApi.Models.csproj" />
+      <ProjectReference Include="..\Users.Common\Users.Common.csproj" />
+      <ProjectReference Include="..\Users.Data\Users.Data.csproj" />
+      <ProjectReference Include="..\Users.Refit\Users.Refit.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RentRide.AuthenticationApi.Models" Version="1.1.3" />
+    </ItemGroup>
+
+</Project>

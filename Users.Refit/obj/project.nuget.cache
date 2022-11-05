@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "d12f1lHxi3f6iz2IgTRPgNK3TCdGzflUoRpAYHAZQ8wNLJFvdRnGCg2lUG9/MWCirBsI1xacxxYB9ObARSoZ4A==",
+  "success": true,
+  "projectFilePath": "D:\\MyRepos\\RentRide Microcervices\\RentRide.UserApi\\Users.Refit\\Users.Refit.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\sinto\\.nuget\\packages\\refit\\6.3.2\\refit.6.3.2.nupkg.sha512",
+    "C:\\Users\\sinto\\.nuget\\packages\\rentride.authenticationapi.models\\1.1.3\\rentride.authenticationapi.models.1.1.3.nupkg.sha512",
+    "C:\\Users\\sinto\\.nuget\\packages\\system.net.http.json\\6.0.0\\system.net.http.json.6.0.0.nupkg.sha512",
+    "C:\\Users\\sinto\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\sinto\\.nuget\\packages\\system.text.encodings.web\\6.0.0\\system.text.encodings.web.6.0.0.nupkg.sha512",
+    "C:\\Users\\sinto\\.nuget\\packages\\system.text.json\\6.0.0\\system.text.json.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

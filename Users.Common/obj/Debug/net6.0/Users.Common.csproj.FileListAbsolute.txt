@@ -1,0 +1,12 @@
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\bin\Debug\net6.0\Users.Common.deps.json
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\bin\Debug\net6.0\Users.Common.dll
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\bin\Debug\net6.0\Users.Common.pdb
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.csproj.AssemblyReference.cache
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.AssemblyInfoInputs.cache
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.AssemblyInfo.cs
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.csproj.CoreCompileInputs.cache
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.dll
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\refint\Users.Common.dll
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\Users.Common.pdb
+D:\MyRepos\RentRide Microcervices\RentRide.UserApi\Users.Common\obj\Debug\net6.0\ref\Users.Common.dll
