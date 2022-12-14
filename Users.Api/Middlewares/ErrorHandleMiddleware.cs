@@ -2,8 +2,8 @@
 using System.Text.Json;
 using System.Text.Unicode;
 using Microsoft.AspNetCore.WebUtilities;
+using RentRide.Common.Exceptions;
 using Users.Api.Models.Responses.Errors;
-using Users.Common.Exceptions;
 
 namespace Users.Api.Middlewares;
 

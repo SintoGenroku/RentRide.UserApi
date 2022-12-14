@@ -16,9 +16,9 @@ public class UsersDbContext : DbContext
     {
         modelBuilder.Entity<User>(user =>
         {
-            user.Property(u => u.Fullname).IsRequired();
+            user.Property(u => u.Fullname).IsRequired(); 
+            user.Property(u => u.IsActive).HasDefaultValue(true);
+            user.Property(u => u.IsDeleted).HasDefaultValue(false);
         });
-
-
     }
 }

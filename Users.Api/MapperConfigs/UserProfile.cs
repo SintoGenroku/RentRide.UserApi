@@ -11,10 +11,9 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<UserCreateRequestModel, User>();
         CreateMap<UserEditRequestModel, User>();
         CreateMap<User, UserResponseModel>();
-        CreateMap<UserCreated, User>();
-        CreateMap<User, UserCreated>();
+        CreateMap<UserQueue, User>();
+        CreateMap<User, UserQueue>();
     }
 }

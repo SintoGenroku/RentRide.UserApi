@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using MassTransit;
+using RentRide.Common.Exceptions;
 using Users.Common;
-using Users.Common.Exceptions;
 using Users.Data.Repositories.Abstracts;
 using Users.Services.Abstracts;
 
@@ -9,13 +10,12 @@ namespace Users.Services;
 public class UserService: IUserService
 {
     private readonly IUserRepository _userRepository;
-
-
-    public UserService(IUserRepository userRepository)
+    private readonly IBus _bus;
+    public UserService(IUserRepository userRepository, IBus bus)
     {
         _userRepository = userRepository;
+        _bus = bus;
     }
-
 
     public async Task<User> GetUserByIdAsync(Guid id)
     {
@@ -29,13 +29,10 @@ public class UserService: IUserService
         return user;
     }
 
-    public async Task<User> AddUserAsync(User user)
+    public async Task AddUserAsync(User user)
     {
-        
         user.CreatedAt = DateTime.UtcNow;
         await _userRepository.CreateAsync(user);
-
-        return user;
     }
 
     public async Task<ReadOnlyCollection<User>> GetUsersAsync()
@@ -60,5 +57,19 @@ public class UserService: IUserService
         var user = await _userRepository.GetByNameAsync(username);
 
         return user;
+    }
+
+    public async Task DeleteUserDataAsync(User user)
+    {
+        user.Fullname = null;
+        user.CreatedAt = null;
+        user.PhoneNumber = null;
+        user.MailAddress = null;
+        user.IsActive = null;
+        user.IsDeleted = true;
+
+        await _userRepository.UpdateAsync(user);
+
+        await _bus.Publish(user.Id);
     }
 }
