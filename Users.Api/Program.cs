@@ -14,11 +14,13 @@ using Users.Data.Repositories.Abstracts;
 using Users.Refit;
 using Users.Services;
 using Users.Services.Abstracts;
+using LoggerExtensions = Users.Api.Extensions.LoggerExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 
+LoggerExtensions.AddElkLogger();
 
 services.AddControllers();
 

@@ -15,7 +15,7 @@ namespace Users.Api.Controllers;
     /// <summary>
     ///     Controller for working with users
     /// </summary>
-    [AllowAnonymous]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
  public class UsersController : Controller
@@ -23,14 +23,14 @@ namespace Users.Api.Controllers;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IBus _bus;
-        //private readonly ILogger _logger;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userService, IMapper mapper, IBus bus/*, ILogger logger*/)
+        public UsersController(IUserService userService, IMapper mapper, IBus bus, ILogger<UsersController> logger)
         {
             _userService = userService;
             _mapper = mapper;
             _bus = bus;
-            //_logger = logger;
+            _logger = logger;
         }
         
         /// <summary>
@@ -38,7 +38,6 @@ namespace Users.Api.Controllers;
         /// </summary>
         // <returns>Users collection</returns>
         [ProducesResponseType(typeof(IReadOnlyCollection<UserResponseModel>), StatusCodes.Status200OK)]
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetUsersAsync()
         {
@@ -57,7 +56,6 @@ namespace Users.Api.Controllers;
         // <returns>User</returns>
         [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-       // [Authorize]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult> GetUserAsync(Guid id)
         {
@@ -79,7 +77,7 @@ namespace Users.Api.Controllers;
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
-        [Authorize]
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> ChangeUserActivityAsync(Guid id)
         {
@@ -92,11 +90,11 @@ namespace Users.Api.Controllers;
             user.IsActive = !user.IsActive;
             await _userService.UpdateAsync(user);
             
+            _logger.LogInformation("Update {@user} IsActive status", user);
             var userQueue = _mapper.Map<User, UserQueue>(user);
             await _bus.Publish(userQueue);
             
-            //_logger.LogInformation($"Update {user.Fullname} IsActive to: {user.IsActive}");
-            
+            _logger.LogInformation("Publish {@userQueue} update activity status", userQueue);
             return Ok();
         }
         
@@ -108,7 +106,6 @@ namespace Users.Api.Controllers;
         // <returns>Operation status code</returns>
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        //[Authorize]
         [HttpPatch("[action]/{id:guid}")]
         public async Task<IActionResult> EditUserAsync(UserEditRequestModel userEditRequestModel, Guid id)
         {
@@ -138,20 +135,18 @@ namespace Users.Api.Controllers;
             user.PhoneNumber = userEditRequestModel.PhoneNumber;
             
             await _userService.UpdateAsync(user);
-            //_logger.LogInformation($"Update {user.Fullname} email/phone");
+            _logger.LogInformation("Update {@user} email/phone", user);
             return NoContent();
         }
         
         /// <summary>
         ///     Allows update current user 
         /// </summary>
-        /// <param name="userEditRequestModel">special user model with updated data</param>
-        /// <param name="id">GUID user identifier</param>
+        /// <param name="userId">GUID user identifier</param>
         // <returns>Operation status code</returns>
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        //[Authorize]
-        [HttpPatch("[action]/{id:guid}")]
+        [HttpPatch("[action]/{userId:guid}")]
         public async Task<IActionResult> DeleteUserAsync(Guid userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);
@@ -165,7 +160,7 @@ namespace Users.Api.Controllers;
                 return BadRequest("user is already deleted");
             }
             await _userService.DeleteUserDataAsync(user);
-            //_logger.LogInformation($"Delete {user.Fullname} sensitive data");
+            _logger.LogInformation("Delete {@user} sensitive data", user);
             return NoContent();
         }
     }

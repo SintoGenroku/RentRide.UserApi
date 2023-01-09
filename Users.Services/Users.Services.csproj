@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RentRide.AuthenticationApi.Models\RentRide.AuthenticationApi.Models.csproj" />
       <ProjectReference Include="..\Users.Common\Users.Common.csproj" />
       <ProjectReference Include="..\Users.Data\Users.Data.csproj" />
       <ProjectReference Include="..\Users.Refit\Users.Refit.csproj" />

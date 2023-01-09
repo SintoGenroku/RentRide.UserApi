@@ -33,6 +33,10 @@
         <PackageReference Include="RentRide.AuthenticationApi.Models" Version="1.4.1" />
         <PackageReference Include="RentRide.Common" Version="1.0.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+        <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+        <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
         <PackageReference Include="Serilog.Sinks.Logz.Io" Version="7.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
