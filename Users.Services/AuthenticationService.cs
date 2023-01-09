@@ -1,6 +1,5 @@
 ﻿using RentRide.AuthenticationApi.Models.Requests;
-using RentRide.AuthenticationApi.Models.Responses;
-using Users.Common.Exceptions;
+using RentRide.Common.Exceptions;
 using Users.Refit;
 using Users.Services.Abstracts;
 

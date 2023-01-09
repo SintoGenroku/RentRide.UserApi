@@ -3,36 +3,34 @@ using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentRide.AuthenticationApi.Models;
+using RentRide.Common.Exceptions;
 using Users.Api.Models.Requests.Users;
 using Users.Api.Models.Responses.Errors;
 using Users.Api.Models.Responses.Users;
 using Users.Common;
-using Users.Common.Exceptions;
 using Users.Services.Abstracts;
-using IAuthenticationService = Users.Services.Abstracts.IAuthenticationService;
 
 namespace Users.Api.Controllers;
 
-/// <summary>
+    /// <summary>
     ///     Controller for working with users
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
  public class UsersController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IAuthenticationService _authenticationService; 
         private readonly IMapper _mapper;
         private readonly IBus _bus;
-        //private readonly ILogger _logger;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userService, IAuthenticationService authenticationService, IMapper mapper, IBus bus/*, ILogger logger*/)
+        public UsersController(IUserService userService, IMapper mapper, IBus bus, ILogger<UsersController> logger)
         {
             _userService = userService;
-            _authenticationService = authenticationService;
             _mapper = mapper;
             _bus = bus;
-            //_logger = logger;
+            _logger = logger;
         }
         
         /// <summary>
@@ -40,7 +38,6 @@ namespace Users.Api.Controllers;
         /// </summary>
         // <returns>Users collection</returns>
         [ProducesResponseType(typeof(IReadOnlyCollection<UserResponseModel>), StatusCodes.Status200OK)]
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetUsersAsync()
         {
@@ -59,7 +56,6 @@ namespace Users.Api.Controllers;
         // <returns>User</returns>
         [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-       // [Authorize]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult> GetUserAsync(Guid id)
         {
@@ -72,43 +68,7 @@ namespace Users.Api.Controllers;
             
             return Ok(userResponseModel);
         }
-        
-        /*/// <summary>
-        /// Allows add new user
-        /// </summary>
-        /// <param name="userRequest">Personality add model</param>
-        /// <returns>Created personality model</returns>
-        /// <exception cref="BadRequestException">Throws if edit model is invalid</exception>
-        [ProducesResponseType( typeof(UserResponseModel), StatusCodes.Status201Created)]
-        [ProducesResponseType( typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        [HttpPost]
-        public async Task<IActionResult> AddUser(UserCreateRequestModel userRequest)
-        {
-            if (userRequest == null)
-            {
-                throw new BadRequestException("Empty model");
-            }
 
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.ToDictionary(
-                    error => error.Key,
-                    error => error.Value?.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
-            
-                throw new BadRequestException("Invalid data", errors);
-            }
-        
-            var user = _mapper.Map<User>(userRequest);
-
-            user = await _userService.AddUserAsync(user);
-
-            var userResponse = _mapper.Map<UserResponseModel>(user);
-
-        
-            return CreatedAtAction(Url.RouteUrl(nameof(AddUser)), userResponse);
-        }*/
-        
         /// <summary>
         ///     Allows delete current user by his ID
         /// </summary>
@@ -117,7 +77,7 @@ namespace Users.Api.Controllers;
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
-        [Authorize]
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> ChangeUserActivityAsync(Guid id)
         {
@@ -130,11 +90,11 @@ namespace Users.Api.Controllers;
             user.IsActive = !user.IsActive;
             await _userService.UpdateAsync(user);
             
-            var userQueue = _mapper.Map<User, UserCreated>(user);
+            _logger.LogInformation("Update {@user} IsActive status", user);
+            var userQueue = _mapper.Map<User, UserQueue>(user);
             await _bus.Publish(userQueue);
             
-            //_logger.LogInformation($"Update {user.Fullname} IsActive to: {user.IsActive}");
-            
+            _logger.LogInformation("Publish {@userQueue} update activity status", userQueue);
             return Ok();
         }
         
@@ -146,8 +106,7 @@ namespace Users.Api.Controllers;
         // <returns>Operation status code</returns>
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-      //  [Authorize]
-        [HttpPatch("{id:guid}")]
+        [HttpPatch("[action]/{id:guid}")]
         public async Task<IActionResult> EditUserAsync(UserEditRequestModel userEditRequestModel, Guid id)
         {
             if (userEditRequestModel == null)
@@ -176,7 +135,32 @@ namespace Users.Api.Controllers;
             user.PhoneNumber = userEditRequestModel.PhoneNumber;
             
             await _userService.UpdateAsync(user);
-            //_logger.LogInformation($"Update {user.Fullname} email/phone");
+            _logger.LogInformation("Update {@user} email/phone", user);
             return NoContent();
-        }  
-}
+        }
+        
+        /// <summary>
+        ///     Allows update current user 
+        /// </summary>
+        /// <param name="userId">GUID user identifier</param>
+        // <returns>Operation status code</returns>
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [HttpPatch("[action]/{userId:guid}")]
+        public async Task<IActionResult> DeleteUserAsync(Guid userId)
+        {
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("invalid data");
+            }
+
+            if (user.IsDeleted)
+            {
+                return BadRequest("user is already deleted");
+            }
+            await _userService.DeleteUserDataAsync(user);
+            _logger.LogInformation("Delete {@user} sensitive data", user);
+            return NoContent();
+        }
+    }

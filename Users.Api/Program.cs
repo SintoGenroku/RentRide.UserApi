@@ -7,8 +7,6 @@ using Users.Api.Extensions;
 using Refit;
 using RentRide.AuthenticationApi.Models;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.Logz.Io;
 using Users.Api.Handlers;
 using Users.Data;
 using Users.Data.Repositories;
@@ -16,11 +14,13 @@ using Users.Data.Repositories.Abstracts;
 using Users.Refit;
 using Users.Services;
 using Users.Services.Abstracts;
+using LoggerExtensions = Users.Api.Extensions.LoggerExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 
+LoggerExtensions.AddElkLogger();
 
 services.AddControllers();
 
@@ -72,9 +72,9 @@ services.AddMassTransit(c =>
     
     c.UsingRabbitMq((context, config) =>
     {
-        config.ReceiveEndpoint("user-queue", e =>
+        config.ReceiveEndpoint("user-userApi-queue", e =>
         {
-            e.Bind<UserCreated>();
+            e.Bind<UserQueue>();
             e.ConfigureConsumer<AuthenticationConsumer>(context);
         });
     });
@@ -86,7 +86,7 @@ services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationSc
         options.Authority = "http://localhost:5035";
         options.RequireHttpsMetadata = false;
         options.ApiName = "Users.Api";
-        options.ApiSecret = "users_secret";
+        options.ApiSecret = "users-secret";
     });
 
 var logger = new LoggerConfiguration()
@@ -95,21 +95,6 @@ var logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
-
-/*LoggerConfiguration loggerConfig = new LoggerConfiguration();
-loggerConfig.WriteTo.LogzIo("secrets.LogzioToken", null,
-    new LogzioOptions
-    {
-        DataCenter = new LogzioDataCenter
-        {
-            SubDomain = "listener", 
-            Port = 8701,
-            UseHttps = true
-        },
-        RestrictedToMinimumLevel = LogEventLevel.Debug,
-        Period = TimeSpan.FromSeconds(10),
-        LogEventsInBatchLimit = 50
-    });*/
 
 var app = builder.Build();
 
